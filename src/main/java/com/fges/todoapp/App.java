@@ -32,26 +32,25 @@ public class App {
 
     public static int exec(String[] args) throws IOException {
         Options cliOptions = new Options();
-        CommandLineParser parser = new DefaultParser();
-
         cliOptions.addRequiredOption("s", "source", true, "File containing the todos");
 
-        CommandLine cmd;
-        try {
-            cmd = parser.parse(cliOptions, args);
-        } catch (ParseException ex) {
-            System.err.println("Fail to parse arguments: " + ex.getMessage());
-            return 1;
-        }
+        // Analyse des options de ligne de commande
+        CommandLine cmd = CommandLineProcessor.parseCommandLine(args, cliOptions);
 
-        String fileName = cmd.getOptionValue("s");
+        if (cmd == null) return 1;
 
-        List<String> positionalArgs = cmd.getArgList();
-        if (positionalArgs.isEmpty()) {
-            System.err.println("Missing Command");
-            return 1;
-        }
+        // Traitement de la commande
+        MyCommandProcessor commandProcessor = new MyCommandProcessor();
+        int result = commandProcessor.processCommand(cmd);
+        String fileName = commandProcessor.getFileName();
 
+        List<String> positionalArgs = commandProcessor.getPositionalArgs();
+
+        if(result != 0) return 1;
+
+        System.out.println("Argument : " + positionalArgs);
+
+        /*
         String command = positionalArgs.get(0);
 
         Path filePath = Paths.get(fileName);
@@ -118,8 +117,62 @@ public class App {
                 );
             }
         }
+        */
 
         System.err.println("Done.");
         return 0;
+    }
+
+    interface CommandProcessor {
+        int processCommand(CommandLine cmd);
+    }
+
+    interface ArgumentValidator {
+        boolean validateArguments(CommandLine cmd);
+    }
+
+    static class PositionalArgumentValidator implements ArgumentValidator {
+        @Override
+        public boolean validateArguments(CommandLine cmd) {
+            List<String> positionalArgs = cmd.getArgList();
+            return !positionalArgs.isEmpty();
+        }
+    }
+
+    static class MyCommandProcessor implements  CommandProcessor {
+        private String fileName;
+        private List <String> positionalArgs;
+
+        @Override
+        public int processCommand(CommandLine cmd){
+            this.fileName = cmd.getOptionValue("s");
+
+            PositionalArgumentValidator argumentValidator = new PositionalArgumentValidator();
+            if (!argumentValidator.validateArguments(cmd)) {
+                System.err.println("Argument manquant");
+                return 1;
+            }
+
+            this.positionalArgs = cmd.getArgList();
+            return 0;
+        }
+        public String getFileName() {
+            return this.fileName;
+        }
+        public List<String> getPositionalArgs() {
+            return positionalArgs;
+        }
+    }
+
+    static class CommandLineProcessor {
+        public static CommandLine parseCommandLine (String[] args, Options options) {
+            CommandLineParser parser = new DefaultParser();
+            try {
+                return parser.parse(options, args);
+            } catch (ParseException ex) {
+                System.err.println("Fail to parse arguments: " + ex.getMessage());
+                return null;
+            }
+        }
     }
 }

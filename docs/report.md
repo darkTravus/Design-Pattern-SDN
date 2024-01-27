@@ -1,7 +1,7 @@
 # L3 design pattern report
 
-- **Firstname**: [Your firstname]
-- **Lastname**: [Your lastname]
+- **Firstname**: DJOUE
+- **Lastname**: ARIEL EMMANUEL KOUADIO
 
 
 > Add your thoughts on every TP bellow, everything is interresting but no need to right a book.
@@ -22,4 +22,34 @@
 > Fill free to contact me if needed.
 
 ---
-...
+
+>  ### TP1
+> - La première tâche du script est de s'occuper des options passer en ligne de commande et de renvoyer une erreur 
+> en fonction du résultat. On va d'abord séparer l'analyse des arguments de la gestion des erreurs avec la classe
+> ```java
+> static class CommandLineProcessor implements CommandProcessor {}
+> ```
+> - On va maintenant implémenter une fonction spécifique pour récupérer l'argument passer en ligne de commande
+> ```java
+> static class MyCommandProcessor {}
+> ```
+> - Plus bas dans le code, je me suis rendu compte qu'il fallait aussi récupérer le reste des arguments de la ligne de
+> commande 😅. J'ai donc ajouté l'interface
+> ```java
+> interface ArgumentValidator {}
+> ```
+> et une classe
+> ```java
+> static class PositionalArgumentValidator implements ArgumentValidator {}
+> ```
+> afin de respecter le principe SOLID. Le but est de vérifier s'il y'a des arguments présents.
+> 
+>   J'ai par conséquent ajouté quelqus instructions à la méthode
+> ```java
+> public int processCommand(CommandLine cmd) {}
+> ```
+> de la classe
+> ```java
+> static class CommandLineProcessor implements CommandProcessor {}
+> ```
+> pour gérer les erreurs.
