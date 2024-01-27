@@ -48,19 +48,11 @@ public class App {
 
         if(result != 0) return 1;
 
-        System.out.println("Argument : " + positionalArgs);
+        String command = positionalArgs.get(0);
+        Path filePath = Paths.get(fileName);
+        String fileContent = FileReader.readFileContent(filePath, new PathValidator());
 
         /*
-        String command = positionalArgs.get(0);
-
-        Path filePath = Paths.get(fileName);
-
-        String fileContent = "";
-
-        if (Files.exists(filePath)) {
-            fileContent = Files.readString(filePath);
-        }
-
         if (command.equals("insert")) {
             if (positionalArgs.size() < 2) {
                 System.err.println("Missing TODO name");
@@ -131,11 +123,33 @@ public class App {
         boolean validateArguments(CommandLine cmd);
     }
 
+    static class PathValidator {
+        public boolean validatePath(Path filePath) {
+            return Files.exists(filePath);
+        }
+    }
+
     static class PositionalArgumentValidator implements ArgumentValidator {
         @Override
         public boolean validateArguments(CommandLine cmd) {
             List<String> positionalArgs = cmd.getArgList();
             return !positionalArgs.isEmpty();
+        }
+    }
+
+    static class FileReader {
+        public static String readFileContent(Path filePath, PathValidator pathValidator) {
+                try {
+                    if (pathValidator.validatePath(filePath)) {
+                        return Files.readString(filePath);
+                    } else {
+                        System.err.println("Le chemin du fichier n'est pas valide");
+                        return null;
+                    }
+                } catch (IOException ex) {
+                    System.err.println("Impossible de lire le fichier: " + ex.getMessage());
+                    return null;
+                }
         }
     }
 

@@ -53,3 +53,12 @@
 > static class CommandLineProcessor implements CommandProcessor {}
 > ```
 > pour gérer les erreurs.
+> 
+> - Pour ce qui est de la récupération du contenu du fichier, j'ai suivi le même principe en séparant la vérification
+> du chemin de la lecture du fichier respectivement avec les classes suivantes :
+> ```java
+> static class PathValidator {}
+> ```
+> ```java
+> static class FileReader {}
+> ```
