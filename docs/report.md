@@ -66,3 +66,18 @@ static {
 qui renvoie l'instance de la commande si elle existe dans la table de correspondance.
 - Pour ce qui est des classes spécifique à chaque commande, la même méthode est utilisée. Une interface de base, dans
 notre cas ```Command``` et les classes spécifique. Par exemple ```InsertCommand```
+- Et maintenant pour ce qui est du procéder de lecture et d'insertion il faudra juste faire des méthodes privées
+spécifiqiues à chaque classe en fonction de l'extension du fichier (```csv``` ou ```json```). Sans oublier de précisé
+le fonctionnement dans la méthode ```execute```
+> ### Exemple
+> ```java
+> static class InsertCommand implements Command {
+>    @Override
+>    public int execute(List<String> positionalArgs, Path filePath) {}
+>    private void processJsonInsertCommand(Path filePath, String todo) {}
+>    private void processCsvInsertCommand(Path filePath, String todo) {}
+> }
+> ```
+
+> **NOTE** : Le programme ne crée plus de fichier s'il nexiste pas, le fichier doit au préalabement existé 
+> avant de faire une opération sur ce dernier.

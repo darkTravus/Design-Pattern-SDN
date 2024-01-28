@@ -22,7 +22,7 @@ public class App {
 
     private static final Map<String, Command> commandRegistry = new HashMap<>();
 
-    // Table de correspondance
+    // Table de correspondence
     static {
         commandRegistry.put("insert", new InsertCommand());
         commandRegistry.put("list", new ListCommand());
@@ -35,7 +35,7 @@ public class App {
         System.exit(exec(args));
     }
 
-    public static int exec(String[] args) throws IOException {
+    public static int exec(String[] args) {
         Options cliOptions = new Options();
         cliOptions.addRequiredOption("s", "source", true, "File containing the todos");
 
@@ -55,9 +55,9 @@ public class App {
 
         String command = positionalArgs.get(0);
         Path filePath = Paths.get(fileName);
-        String fileContent = FileReader.readFileContent(filePath, new PathValidator());
+        FileReader.readFileContent(filePath, new PathValidator());
 
-        // Utilisation de la table de correspondance pour déterminer la commande
+        // Utilisation de la table de correspondence pour déterminer la commande
         Command commandExecutor = createCommandExecutor(command);
         if (commandExecutor != null) {
             commandExecutor.execute(positionalArgs, filePath);
@@ -65,65 +65,6 @@ public class App {
             System.err.println("Commande inconnue: " + command);
             return 1;
         }
-
-        /*
-        if (command.equals("insert")) {
-            if (positionalArgs.size() < 2) {
-                System.err.println("Missing TODO name");
-                return 1;
-            }
-            String todo = positionalArgs.get(1);
-
-            if (fileName.endsWith(".json")) {
-                // JSON
-                ObjectMapper mapper = new ObjectMapper();
-                JsonNode actualObj = mapper.readTree(fileContent);
-                if (actualObj instanceof MissingNode) {
-                    // Node was not reconised
-                    actualObj = JsonNodeFactory.instance.arrayNode();
-                }
-
-                if (actualObj instanceof ArrayNode arrayNode) {
-                    arrayNode.add(todo);
-                }
-
-                Files.writeString(filePath, actualObj.toString());
-            }
-            if (fileName.endsWith(".csv")) {
-                // CSV
-                if (!fileContent.endsWith("\n") && !fileContent.isEmpty()) {
-                    fileContent += "\n";
-                }
-                fileContent += todo;
-
-                Files.writeString(filePath, fileContent);
-            }
-        }
-
-
-        if (command.equals("list")) {
-            if (fileName.endsWith(".json")) {
-                // JSON
-                ObjectMapper mapper = new ObjectMapper();
-                JsonNode actualObj = mapper.readTree(fileContent);
-                if (actualObj instanceof MissingNode) {
-                    // Node was not recognised
-                    actualObj = JsonNodeFactory.instance.arrayNode();
-                }
-
-                if (actualObj instanceof ArrayNode arrayNode) {
-                    arrayNode.forEach(node -> System.out.println("- " + node.toString()));
-                }
-            }
-            if (fileName.endsWith(".csv")) {
-                // CSV
-                System.out.println(Arrays.stream(fileContent.split("\n"))
-                        .map(todo -> "- " + todo)
-                        .collect(Collectors.joining("\n"))
-                );
-            }
-        }
-        */
 
         System.err.println("Done.");
         return 0;
@@ -141,6 +82,51 @@ public class App {
         int execute(List<String> positionalArgs, Path filePath);
     }
 
+    static class ListCommand implements Command {
+        @Override
+        public int execute(List<String> positionalArgs, Path filePath) {
+            if (filePath.toString().endsWith(".json")) {
+                // JSON
+                processJsonListCommand(filePath);
+            }
+            if (filePath.toString().endsWith(".csv")) {
+                // CSV
+                processCsvListCommand(filePath);
+            }
+
+            return 0;
+        }
+        private void processJsonListCommand(Path filePath) {
+            try {
+                String fileContent = Files.readString(filePath);
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode actualObj = mapper.readTree(fileContent);
+                if (actualObj instanceof MissingNode) {
+                    // Node was not recognised
+                    actualObj = JsonNodeFactory.instance.arrayNode();
+                }
+
+                if (actualObj instanceof ArrayNode arrayNode) {
+                    arrayNode.forEach(node -> System.out.println("- " + node.toString()));
+                }
+            } catch (IOException e) {
+                System.err.println("Error processing JSON list: " + e.getMessage());
+            }
+        }
+
+        private void processCsvListCommand(Path filePath) {
+            try {
+                String fileContent = Files.readString(filePath);
+                System.out.println(Arrays.stream(fileContent.split("\n"))
+                        .map(todo -> "- " + todo)
+                        .collect(Collectors.joining("\n"))
+                );
+            } catch (IOException e) {
+                System.err.println("Error processing CSV list: " + e.getMessage());
+            }
+        }
+
+    }
     static class InsertCommand implements Command {
         @Override
         public int execute(List<String> positionalArgs, Path filePath) {
@@ -150,23 +136,52 @@ public class App {
             }
             String todo = positionalArgs.get(1);
 
-            try {
-                Files.writeString(filePath, todo);
-            } catch (IOException e) {
-                System.err.println("Error writing to file: " + e.getMessage());
+            if (filePath.toString().endsWith(".json")) {
+                // JSON
+                processJsonInsertCommand(filePath, todo);
+            } else if (filePath.toString().endsWith(".csv")) {
+                // CSV
+                processCsvInsertCommand(filePath, todo);
+            } else {
+                System.err.println("Unsupported file type");
                 return 1;
             }
 
             return 0;
         }
-    }
 
-    static class ListCommand implements Command {
-        @Override
-        public int execute(List<String> positionalArgs, Path filePath) {
-            System.out.println("List...");
+        private void processJsonInsertCommand(Path filePath, String todo) {
+            try {
+                String fileContent = Files.readString(filePath);
+                ObjectMapper mapper = new ObjectMapper();
+                JsonNode actualObj = mapper.readTree(fileContent);
+                if (actualObj instanceof MissingNode) {
+                    // Node was not recognised
+                    actualObj = JsonNodeFactory.instance.arrayNode();
+                }
 
-            return 0;
+                if (actualObj instanceof ArrayNode arrayNode) {
+                    arrayNode.add(todo);
+                }
+
+                Files.writeString(filePath, actualObj.toString());
+            } catch (IOException e) {
+                System.err.println("Error processing JSON insert: " + e.getMessage());
+            }
+        }
+
+        private void processCsvInsertCommand(Path filePath, String todo) {
+            try {
+                String fileContent = Files.readString(filePath);
+                if (!fileContent.endsWith("\n") && !fileContent.isEmpty()) {
+                    fileContent += "\n";
+                }
+                fileContent += todo;
+
+                Files.writeString(filePath, fileContent);
+            } catch (IOException e) {
+                System.err.println("Error processing CSV insert: " + e.getMessage());
+            }
         }
     }
 
