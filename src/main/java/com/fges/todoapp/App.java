@@ -12,16 +12,21 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
  * Hello world!
  */
 public class App {
+
+    private static final Map<String, Command> commandRegistry = new HashMap<>();
+
+    // Table de correspondance
+    static {
+        commandRegistry.put("insert", new InsertCommand());
+        commandRegistry.put("list", new ListCommand());
+    }
 
     /**
      * Do not change this method
@@ -51,6 +56,15 @@ public class App {
         String command = positionalArgs.get(0);
         Path filePath = Paths.get(fileName);
         String fileContent = FileReader.readFileContent(filePath, new PathValidator());
+
+        // Utilisation de la table de correspondance pour déterminer la commande
+        Command commandExecutor = createCommandExecutor(command);
+        if (commandExecutor != null) {
+            commandExecutor.execute(positionalArgs, filePath);
+        } else {
+            System.err.println("Commande inconnue: " + command);
+            return 1;
+        }
 
         /*
         if (command.equals("insert")) {
@@ -121,6 +135,43 @@ public class App {
 
     interface ArgumentValidator {
         boolean validateArguments(CommandLine cmd);
+    }
+
+    interface Command {
+        int execute(List<String> positionalArgs, Path filePath);
+    }
+
+    static class InsertCommand implements Command {
+        @Override
+        public int execute(List<String> positionalArgs, Path filePath) {
+            if (positionalArgs.size() < 2) {
+                System.err.println("Missing TODO name");
+                return 1;
+            }
+            String todo = positionalArgs.get(1);
+
+            try {
+                Files.writeString(filePath, todo);
+            } catch (IOException e) {
+                System.err.println("Error writing to file: " + e.getMessage());
+                return 1;
+            }
+
+            return 0;
+        }
+    }
+
+    static class ListCommand implements Command {
+        @Override
+        public int execute(List<String> positionalArgs, Path filePath) {
+            System.out.println("List...");
+
+            return 0;
+        }
+    }
+
+    private static Command createCommandExecutor(String command) {
+        return commandRegistry.get(command);
     }
 
     static class PathValidator {
