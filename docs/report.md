@@ -45,7 +45,7 @@ du chemin de la lecture du fichier respectivement avec les classes suivantes :
 ```java
 static class PathValidator {}
 
-static class FileReader {}
+static class com.fges.todoapp.util.FileReader {}
 ```
 - Pour ce qui est de la suite du script, on utilise une structure conditionnelle pour vérifier si la commande vaut
 ```insert``` ou ```list```. Dans l'optique ou par exemple nous voudrons rajouter d'autres commandes, on aura beaucoup 
@@ -81,3 +81,6 @@ le fonctionnement dans la méthode ```execute```
 
 > **NOTE** : Le programme ne crée plus de fichier s'il nexiste pas, le fichier doit au préalabement existé 
 > avant de faire une opération sur ce dernier.
+ 
+- Je vais maintenant séparer le code final en différent ```package``` car le script deviens à mons sens
+un peu trop lourd.
