@@ -11,12 +11,12 @@ public class FileReader {
             if (pathValidator.validatePath(filePath)) {
                 return Files.readString(filePath);
             } else {
-                System.err.println("Le chemin du fichier n'est pas valide");
-                return null;
+                //System.err.println("Le chemin du fichier n'est pas valide");
+                return "";
             }
         } catch (IOException ex) {
             System.err.println("Impossible de lire le fichier: " + ex.getMessage());
-            return null;
+            return "";
         }
     }
 }

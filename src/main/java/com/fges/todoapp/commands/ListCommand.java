@@ -16,14 +16,17 @@ import java.util.stream.Collectors;
 
 public class ListCommand implements Command {
     @Override
-    public int execute(List<String> positionalArgs, Path filePath) {
+    public int execute(List<String> positionalArgs, Path filePath) throws IOException {
         if (filePath.toString().endsWith(".json")) {
             // JSON
             processJsonListCommand(filePath);
         }
-        if (filePath.toString().endsWith(".csv")) {
+        else if (filePath.toString().endsWith(".csv")) {
             // CSV
             processCsvListCommand(filePath);
+        }  else {
+            System.err.println("Unsupported file type");
+            return 1;
         }
 
         return 0;

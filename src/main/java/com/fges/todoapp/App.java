@@ -2,8 +2,6 @@
 package com.fges.todoapp;
 
 import com.fges.todoapp.commands.*;
-import com.fges.todoapp.util.*;
-import com.fges.todoapp.util.PositionalArgumentValidator;
 
 import org.apache.commons.cli.*;
 
@@ -25,6 +23,10 @@ public class App {
         commandRegistry.put("list", new ListCommand());
     }
 
+    private static Command createCommandExecutor(String command) {
+        return commandRegistry.get(command);
+    }
+
     /**
      * Do not change this method
      */
@@ -32,7 +34,7 @@ public class App {
         System.exit(exec(args));
     }
 
-    public static int exec(String[] args) {
+    public static int exec(String[] args) throws IOException {
         Options cliOptions = new Options();
         cliOptions.addRequiredOption("s", "source", true, "File containing the todos");
 
@@ -52,7 +54,6 @@ public class App {
 
         String command = positionalArgs.get(0);
         Path filePath = Paths.get(fileName);
-        FileReader.readFileContent(filePath, new PathValidator());
 
         // Utilisation de la table de correspondence pour déterminer la commande
         Command commandExecutor = createCommandExecutor(command);
@@ -67,51 +68,4 @@ public class App {
         return 0;
     }
 
-    interface CommandProcessor {
-        int processCommand(CommandLine cmd);
-    }
-
-
-    private static Command createCommandExecutor(String command) {
-        return commandRegistry.get(command);
-    }
-
-
-
-    static class MyCommandProcessor implements  CommandProcessor {
-        private String fileName;
-        private List <String> positionalArgs;
-
-        @Override
-        public int processCommand(CommandLine cmd){
-            this.fileName = cmd.getOptionValue("s");
-
-            PositionalArgumentValidator argumentValidator = new PositionalArgumentValidator();
-            if (!argumentValidator.validateArguments(cmd)) {
-                System.err.println("Argument manquant");
-                return 1;
-            }
-
-            this.positionalArgs = cmd.getArgList();
-            return 0;
-        }
-        public String getFileName() {
-            return this.fileName;
-        }
-        public List<String> getPositionalArgs() {
-            return positionalArgs;
-        }
-    }
-
-    static class CommandLineProcessor {
-        public static CommandLine parseCommandLine (String[] args, Options options) {
-            CommandLineParser parser = new DefaultParser();
-            try {
-                return parser.parse(options, args);
-            } catch (ParseException ex) {
-                System.err.println("Fail to parse arguments: " + ex.getMessage());
-                return null;
-            }
-        }
-    }
 }

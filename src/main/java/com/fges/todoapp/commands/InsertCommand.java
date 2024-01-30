@@ -1,6 +1,9 @@
 // com.fges.todoapp.commands.InsertCommand
 package com.fges.todoapp.commands;
 
+import com.fges.todoapp.util.PathValidator;
+import com.fges.todoapp.util.FileReader;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -14,7 +17,7 @@ import java.util.List;
 
 public class InsertCommand implements Command {
     @Override
-    public int execute(List<String> positionalArgs, Path filePath) {
+    public int execute(List<String> positionalArgs, Path filePath) throws IOException {
         if (positionalArgs.size() < 2) {
             System.err.println("Missing TODO name");
             return 1;
@@ -35,9 +38,8 @@ public class InsertCommand implements Command {
         return 0;
     }
 
-    private void processJsonInsertCommand(Path filePath, String todo) {
-        try {
-            String fileContent = Files.readString(filePath);
+    private void processJsonInsertCommand(Path filePath, String todo) throws IOException {
+        String fileContent = FileReader.readFileContent(filePath, new PathValidator());
             ObjectMapper mapper = new ObjectMapper();
             JsonNode actualObj = mapper.readTree(fileContent);
             if (actualObj instanceof MissingNode) {
@@ -50,22 +52,15 @@ public class InsertCommand implements Command {
             }
 
             Files.writeString(filePath, actualObj.toString());
-        } catch (IOException e) {
-            System.err.println("Error processing JSON insert: " + e.getMessage());
-        }
     }
 
-    private void processCsvInsertCommand(Path filePath, String todo) {
-        try {
-            String fileContent = Files.readString(filePath);
+    private void processCsvInsertCommand(Path filePath, String todo) throws IOException {
+        String fileContent = FileReader.readFileContent(filePath, new PathValidator());
             if (!fileContent.endsWith("\n") && !fileContent.isEmpty()) {
                 fileContent += "\n";
             }
             fileContent += todo;
 
             Files.writeString(filePath, fileContent);
-        } catch (IOException e) {
-            System.err.println("Error processing CSV insert: " + e.getMessage());
-        }
     }
 }
