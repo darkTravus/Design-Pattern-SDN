@@ -5,5 +5,5 @@ import java.nio.file.Path;
 import java.util.List;
 
 public interface Command {
-    int execute(List<String> positionalArgs, Path filePath) throws IOException;
+    int execute(List<String> positionalArgs, Path filePath, boolean markDone) throws IOException;
 }

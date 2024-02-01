@@ -12,18 +12,17 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ListCommand implements Command {
     @Override
-    public int execute(List<String> positionalArgs, Path filePath) throws IOException {
+    public int execute(List<String> positionalArgs, Path filePath, boolean markDone) throws IOException {
         if (filePath.toString().endsWith(".json")) {
             // JSON
-            processJsonListCommand(filePath);
+            processJsonListCommand(filePath, markDone);
         }
         else if (filePath.toString().endsWith(".csv")) {
             // CSV
-            processCsvListCommand(filePath);
+            processCsvListCommand(filePath, markDone);
         }  else {
             System.err.println("Unsupported file type");
             return 1;
@@ -31,31 +30,54 @@ public class ListCommand implements Command {
 
         return 0;
     }
-    private void processJsonListCommand(Path filePath) {
+    private void processJsonListCommand(Path filePath, boolean markDone) {
         try {
             String fileContent = Files.readString(filePath);
             ObjectMapper mapper = new ObjectMapper();
             JsonNode actualObj = mapper.readTree(fileContent);
+
             if (actualObj instanceof MissingNode) {
                 // Node was not recognised
                 actualObj = JsonNodeFactory.instance.arrayNode();
             }
 
             if (actualObj instanceof ArrayNode arrayNode) {
-                arrayNode.forEach(node -> System.out.println("- " + node.toString()));
+                if (markDone) {
+                    arrayNode.forEach(node -> {
+                        JsonNode todoNode = node.get("text");
+                        JsonNode doneNode = node.get("done");
+                        if (todoNode != null && doneNode != null && doneNode.asBoolean()) {
+                            System.out.println("- Done: " + todoNode.asText());
+                        }
+                    });
+                } else {
+                    arrayNode.forEach(node -> {
+                        JsonNode todoNode = node.get("text");
+
+                        if (todoNode == null) {
+                            System.out.println("- " + node.asText());
+                        } else {
+                            JsonNode doneNode = node.get("done");
+                            if (doneNode != null && doneNode.asBoolean()) {
+                                System.out.println("- Done: " + todoNode.asText());
+                            }
+                        }
+                    });
+                }
             }
         } catch (IOException e) {
             System.err.println("Error processing JSON list: " + e.getMessage());
         }
     }
 
-    private void processCsvListCommand(Path filePath) {
+    private void processCsvListCommand(Path filePath, boolean markDone) {
         try {
             String fileContent = Files.readString(filePath);
-            System.out.println(Arrays.stream(fileContent.split("\n"))
-                    .map(todo -> "- " + todo)
-                    .collect(Collectors.joining("\n"))
-            );
+            Arrays.stream(fileContent.split("\n"))
+                    .filter(todo -> !markDone || todo.contains("Done"))
+                    .map(todo -> markDone ? todo : "- " + todo)
+                    .forEach(System.out::println);
+
         } catch (IOException e) {
             System.err.println("Error processing CSV list: " + e.getMessage());
         }

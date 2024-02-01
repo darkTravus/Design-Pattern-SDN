@@ -37,6 +37,7 @@ public class App {
     public static int exec(String[] args) throws IOException {
         Options cliOptions = new Options();
         cliOptions.addRequiredOption("s", "source", true, "File containing the todos");
+        cliOptions.addOption("d", "done", false, "Mark a todo as done");
 
         // Analyse des options de ligne de commande
         CommandLine cmd = CommandLineProcessor.parseCommandLine(args, cliOptions);
@@ -47,7 +48,7 @@ public class App {
         MyCommandProcessor commandProcessor = new MyCommandProcessor();
         int result = commandProcessor.processCommand(cmd);
         String fileName = commandProcessor.getFileName();
-
+        boolean isDone = cmd.hasOption("done");
         List<String> positionalArgs = commandProcessor.getPositionalArgs();
 
         if(result != 0) return 1;
@@ -58,7 +59,7 @@ public class App {
         // Utilisation de la table de correspondence pour déterminer la commande
         Command commandExecutor = createCommandExecutor(command);
         if (commandExecutor != null) {
-            commandExecutor.execute(positionalArgs, filePath);
+            commandExecutor.execute(positionalArgs, filePath, isDone);
         } else {
             System.err.println("Commande inconnue: " + command);
             return 1;

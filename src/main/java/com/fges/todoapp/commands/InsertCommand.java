@@ -17,7 +17,7 @@ import java.util.List;
 
 public class InsertCommand implements Command {
     @Override
-    public int execute(List<String> positionalArgs, Path filePath) throws IOException {
+    public int execute(List<String> positionalArgs, Path filePath, boolean markDone) throws IOException {
         if (positionalArgs.size() < 2) {
             System.err.println("Missing TODO name");
             return 1;
@@ -26,10 +26,10 @@ public class InsertCommand implements Command {
 
         if (filePath.toString().endsWith(".json")) {
             // JSON
-            processJsonInsertCommand(filePath, todo);
+            processJsonInsertCommand(filePath, todo, markDone);
         } else if (filePath.toString().endsWith(".csv")) {
             // CSV
-            processCsvInsertCommand(filePath, todo);
+            processCsvInsertCommand(filePath, todo, markDone);
         } else {
             System.err.println("Unsupported file type");
             return 1;
@@ -38,7 +38,7 @@ public class InsertCommand implements Command {
         return 0;
     }
 
-    private void processJsonInsertCommand(Path filePath, String todo) throws IOException {
+    private void processJsonInsertCommand(Path filePath, String todo, boolean markDone) throws IOException {
         String fileContent = FileReader.readFileContent(filePath, new PathValidator());
             ObjectMapper mapper = new ObjectMapper();
             JsonNode actualObj = mapper.readTree(fileContent);
@@ -48,19 +48,28 @@ public class InsertCommand implements Command {
             }
 
             if (actualObj instanceof ArrayNode arrayNode) {
-                arrayNode.add(todo);
+                if (markDone) {
+                    // Nouvelle structure avec la propriété "done"
+                    arrayNode.add(JsonNodeFactory.instance.objectNode()
+                            .put("text", todo)
+                            .put("done", true));
+                } else {
+                    // Structure retro compatible sans la propriété "done"
+                    arrayNode.add(todo);
+                }
             }
 
             Files.writeString(filePath, actualObj.toString());
     }
 
-    private void processCsvInsertCommand(Path filePath, String todo) throws IOException {
+    private void processCsvInsertCommand(Path filePath, String todo, boolean markDone) throws IOException {
         String fileContent = FileReader.readFileContent(filePath, new PathValidator());
-            if (!fileContent.endsWith("\n") && !fileContent.isEmpty()) {
-                fileContent += "\n";
-            }
-            fileContent += todo;
 
-            Files.writeString(filePath, fileContent);
+        if (!fileContent.endsWith("\n") && !fileContent.isEmpty()) fileContent += "\n";
+
+        if (markDone) todo = "Done : " + todo;
+
+        fileContent += todo;
+        Files.writeString(filePath, fileContent);
     }
 }
