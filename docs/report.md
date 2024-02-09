@@ -81,15 +81,17 @@ le fonctionnement dans la méthode ```execute```
  
 - Je vais maintenant séparer le code final en différent ```package``` car le script deviens à mons sens
 un peu trop lourd.
+---
 
+## TP2
 - La tâche du jour est d'ajouter une fonctionnalité permettant de marquer une tâche comme ```done```.
 Voici un petit diagramme qui explique comment la fonctionnalité marhcera dans le programme.
 ```mermaid
 graph TD
     A(Démarrer) -->|Exécuter le Programme| B[Analyser la Ligne de Commande]
     B -->|Vérifier le drapeau --done| C{Drapeau --done présent ?}
-    C -->|Oui| D[Exécuter la Commande avec markDone=True]
-    C -->|Non| E[Exécuter la Commande avec markDone=False]
+    C -->|Oui| D[Exécuter la Commande avec TaskState.DONE]
+    C -->|Non| E[Exécuter la Commande avec TaskState.NOT_DONE]
     D --> F{Type de Commande}
     E --> F{Type de Commande}
     F -->|Insert| G[Traiter l'Insertion]
@@ -105,9 +107,12 @@ graph TD
 l'option ```done```
 ```java
   public interface Command {
-  int execute(List<String> positionalArgs, Path filePath, boolean markDone) throws IOException;
-  }
+    int execute(List<String> positionalArgs, Path filePath, TaskState taskState) throws IOException;
+    }
 ```
+> **NOTE**
+> 
+> ```TaskState``` est une énumération ```enum```.
 - Pour la structure des fichiers ```json```, j'utilise un nouveau format pour vérifier si la tâche est marquée comme
 ```done```
 > ### Exemple
@@ -120,14 +125,37 @@ l'option ```done```
 > {"text":"Just a done task","done":true}
 > ]
 > ```
-Mais le programme reste toujours rétro compatible.
-> ### NOTE
-> Je bloquais un peu sur le code suivant :
-> ```java
-> Arrays.stream(fileContent.split("\n"))
-> .filter(todo -> !markDone || todo.contains("Done"))
-> .map(todo -> markDone ? todo : "- " + todo)
-> .forEach(System.out::println);
-> ```
-> Car la solution que j'avais trouvée me renvoyait le caractère ```\n``` quand il ne trouvait pas ```Done``` dans la chaîne
-> de caractère, chose que je ne voulais pas... Donc j'ai un peu demandé à CHAT-GPT de m'aider à résoudre le problème 😅.
+ - Pour les fichiers ```csv```, les valeurs seront séparées par des points virgules ```;```
+
+
+ - Mais le programme reste toujours rétro compatible.
+> **NOTE**
+> 
+> Lors de l'exécution des GhostTest, j'ai remarqué que certains tests échouaient parceque lors de l'output, 
+> certains Todo étaient encadrés par des doubles quotes ```"``` du côté de la sortie attendue. 
+> J'ignore un peu d'où vient le problème.
+---
+
+## TP2 (update)
+
+- Afin de rendre le code plus **viable** pas mal d'élément ont changé dans l'ensemble du programme.
+
+
+- La classe ```InsertCommand``` n'est plus en charge de vérifier les instructions doivent s'exécuter dans un fichier 
+
+
+- ```JSON``` ou ```CSV```. Pareil pour la classe ```ListCommand```. Elles font appel à une interface ```FileHandler``` 
+qui est en charge de lancer les opérations de lecture où d'écriture 
+(je ne suis pas sûr que cette interface le principe SRP, mais j'en reste là pour le moment.)
+
+
+- Une classe ```Todo``` a aussi été implémenter, elle n'a pas grande utilité pour le moment mais elle sera plus utile 
+dans le cas où nous voudrons insérer plusieurs Todos par exemple 🙂.
+
+
+- Les classes suffixées par ```Factory``` ont juste pour rôle d'instancier des objets.
+
+> **NOTE**
+> 
+> En ce qui concerne la class ```App```, j'ai comme un cruel ressenti d'amélioration mais je ne sais pas quoi faire 
+> ni par où commencer 😓. 

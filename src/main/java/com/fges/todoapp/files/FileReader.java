@@ -1,5 +1,7 @@
-// com.fges.todoapp.util.FileReader
-package com.fges.todoapp.util;
+// com.fges.todoapp.files.FileReader
+package com.fges.todoapp.files;
+
+import com.fges.todoapp.util.PathValidator;
 
 import java.io.IOException;
 import java.nio.file.Files;
