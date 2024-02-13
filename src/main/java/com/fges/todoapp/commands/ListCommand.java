@@ -30,7 +30,11 @@ public class ListCommand implements Command {
             if (taskState == TaskState.DONE && todo.getTaskState() == TaskState.DONE) {
                 System.out.println("- Done: " + todo.getName());
             } else if (taskState != TaskState.DONE) {
-                System.out.println("- " + todo.getName());
+                if (todo.getTaskState() == TaskState.DONE) {
+                    System.out.println("- Done: " + todo.getName());
+                } else {
+                    System.out.println("- " + todo.getName());
+                }
             }
         }
     }
