@@ -20,7 +20,7 @@ import java.util.List;
 
 public class JsonFileHandler implements FileHandler {
     @Override
-    public void write(Todo todo, Path filePath) throws IOException {
+    public void write(List <Todo> todos, Path filePath) throws IOException {
         String fileContent = FileReader.readFileContent(filePath, new PathValidator());
         ObjectMapper mapper = new ObjectMapper();
         JsonNode actualObj = mapper.readTree(fileContent);
@@ -30,15 +30,17 @@ public class JsonFileHandler implements FileHandler {
         }
 
         if (actualObj instanceof ArrayNode arrayNode) {
-            if (todo.getTaskState() == TaskState.DONE) {
-                // Nouvelle structure avec la propriété "done"
-                arrayNode.add(JsonNodeFactory.instance.objectNode()
-                        .put("text", todo.getName())
-                        .put("done", true)
-                );
-            } else {
-                // Structure retro compatible sans la propriété "done"
-                arrayNode.add(todo.getName());
+            for (Todo todo : todos) {
+                if (todo.getTaskState() == TaskState.DONE) {
+                    // Nouvelle structure avec la propriété "done"
+                    arrayNode.add(JsonNodeFactory.instance.objectNode()
+                            .put("text", todo.getName())
+                            .put("done", true)
+                    );
+                } else {
+                    // Structure retro compatible sans la propriété "done"
+                    arrayNode.add(todo.getName());
+                }
             }
         }
 

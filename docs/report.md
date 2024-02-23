@@ -141,10 +141,11 @@ l'option ```done```
 - Afin de rendre le code plus **viable** pas mal d'élément ont changé dans l'ensemble du programme.
 
 
-- La classe ```InsertCommand``` n'est plus en charge de vérifier les instructions doivent s'exécuter dans un fichier 
+- La classe ```InsertCommand``` n'est plus en charge de vérifier si les instructions doivent s'exécuter dans un fichier 
+```JSON``` ou ```CSV```.
 
 
-- ```JSON``` ou ```CSV```. Pareil pour la classe ```ListCommand```. Elles font appel à une interface ```FileHandler``` 
+- Pareil pour la classe ```ListCommand```. Elles font appel à une interface ```FileHandler``` 
 qui est en charge de lancer les opérations de lecture où d'écriture 
 (je ne suis pas sûr que cette interface le principe SRP, mais j'en reste là pour le moment.)
 
@@ -159,3 +160,27 @@ dans le cas où nous voudrons insérer plusieurs Todos par exemple 🙂.
 > 
 > En ce qui concerne la class ```App```, j'ai comme un cruel ressenti d'amélioration mais je ne sais pas quoi faire 
 > ni par où commencer 😓. 
+
+---
+
+## TP3 (Ajout de la commande ```migrate```)
+
+- Pour ajouter la commande ```migrate``` dont le but est de transférer les données d'un ```fichier A``` vers un 
+```fichier B``` pour les extensions prisent en charges, j'ai crée une classe
+```java
+public class MigrateCommand implements Command {}
+```
+- Une nouvelle commande optionnelle avec argument a également été ajoutée, la commande ```--output```, qui prend le 
+fichier de destination.
+
+
+- la méthode ```execute()```, n'a rien de nouveau, elle utilise les mêmes méthodes de lecture et d'écriture.
+> **NOTE**
+> 
+> La méthode d'écriture ```write()``` a été modifiée pour prendre une liste de ```Todo``` 
+> au lieu d'une seule ```Todo```.
+> 
+> *Par manque de pertinance, les classes suffixées par ```Factory```*
+
+- *Petite update* : La classe ```MyCommandProcessor``` s'occupe du traitement des commandes. 
+(Oui elle était déjà présente 😅. Mais par exemple **l'état des todos** ```done``` se vérifiait dans la classe principale.) 

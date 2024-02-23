@@ -11,15 +11,19 @@ import java.util.List;
 
 public class ListCommand implements Command {
     private final FileHandler fileHandler;
+    private final Path filePath;
+    private final TaskState taskState;
 
-    public ListCommand(FileHandler fileHandler) {
+    public ListCommand(FileHandler fileHandler, Path filePath, TaskState taskState) {
         this.fileHandler = fileHandler;
+        this.filePath = filePath;
+        this.taskState = taskState;
     }
 
     @Override
-    public int execute(List<String> positionalArg, Path filePath, TaskState taskState) throws IOException {
-        List<Todo> todoList = fileHandler.read(filePath);
-        printTodoList(todoList, taskState);
+    public int execute(List<String> positionalArg) throws IOException {
+        List<Todo> todoList = this.fileHandler.read(filePath);
+        printTodoList(todoList, this.taskState);
         return 0;
     }
 

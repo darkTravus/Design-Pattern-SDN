@@ -12,10 +12,14 @@ import java.util.List;
 
 public class CsvFileHandler implements FileHandler {
     @Override
-    public void write(Todo todo, Path filePath) throws IOException {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath.toFile(), true))) {
-            String taskState = todo.getTaskState() == TaskState.DONE ? "Done" : "Not Done";
-            writer.write(todo.getName() + ";" + taskState + "\n");
+    public void write(List <Todo> todos, Path filePath) throws IOException {
+        for (Todo todo : todos) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath.toFile(), true))) {
+                String taskState = todo.getTaskState() == TaskState.DONE ? "Done" : "Not Done";
+                writer.write(todo.getName() + ";" + taskState + "\n");
+            } catch (IOException e) {
+                System.err.println("Error processing CSV insert: " + e.getMessage());
+            }
         }
     }
     @Override
