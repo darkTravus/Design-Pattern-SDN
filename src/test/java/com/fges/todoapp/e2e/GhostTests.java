@@ -23,7 +23,7 @@ public class GhostTests {
     /**
      * Version of the TP to use with the API, refer to the TP name on the slides!!
      */
-    private static final String TP_NAME = "tp2";
+    private static final String TP_NAME = "tp3";
 
     /**
      * Should not change

@@ -2,8 +2,8 @@
 package com.fges.todoapp.commands;
 
 import com.fges.todoapp.files.FileHandler;
-import com.fges.todoapp.util.Todo;
-import com.fges.todoapp.util.TaskState;
+import com.fges.todoapp.todo.Todo;
+import com.fges.todoapp.todo.TaskState;
 
 import java.io.IOException;
 import java.nio.file.Path;

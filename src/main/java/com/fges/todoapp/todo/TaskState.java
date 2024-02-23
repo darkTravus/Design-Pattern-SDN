@@ -1,4 +1,4 @@
-package com.fges.todoapp.util;
+package com.fges.todoapp.todo;
 
 public enum TaskState {
     DONE,

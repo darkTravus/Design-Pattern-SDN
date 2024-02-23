@@ -1,6 +1,6 @@
 package com.fges.todoapp.files;
 
-import com.fges.todoapp.util.Todo;
+import com.fges.todoapp.todo.Todo;
 
 import java.io.IOException;
 import java.nio.file.Path;

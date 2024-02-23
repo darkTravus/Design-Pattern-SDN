@@ -1,8 +1,8 @@
 package com.fges.todoapp.files.csv;
 
 import com.fges.todoapp.files.FileHandler;
-import com.fges.todoapp.util.TaskState;
-import com.fges.todoapp.util.Todo;
+import com.fges.todoapp.todo.TaskState;
+import com.fges.todoapp.todo.Todo;
 
 import java.io.*;
 import java.nio.file.Path;

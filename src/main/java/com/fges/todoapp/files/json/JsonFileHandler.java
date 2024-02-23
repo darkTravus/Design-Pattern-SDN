@@ -8,8 +8,8 @@ import com.fasterxml.jackson.databind.node.MissingNode;
 import com.fges.todoapp.files.FileHandler;
 import com.fges.todoapp.files.FileReader;
 import com.fges.todoapp.util.PathValidator;
-import com.fges.todoapp.util.TaskState;
-import com.fges.todoapp.util.Todo;
+import com.fges.todoapp.todo.TaskState;
+import com.fges.todoapp.todo.Todo;
 
 import java.io.IOException;
 import java.nio.file.Files;

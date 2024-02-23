@@ -7,7 +7,6 @@ import com.fges.todoapp.files.FileHandler;
 import com.fges.todoapp.files.FileHandlerRegistry;
 import com.fges.todoapp.files.csv.CsvFileHandler;
 import com.fges.todoapp.files.json.JsonFileHandler;
-import com.fges.todoapp.util.TaskState;
 import org.apache.commons.cli.*;
 
 import java.io.IOException;
@@ -31,8 +30,7 @@ public class App {
         registry.registerFileFactory("csv", new CsvFileHandler());
         registry.registerFileFactory("json", new JsonFileHandler());
     }
-
-
+    // Retourne le FileHandler en fonction de l'extension du fichier
     private static FileHandler detectFileType (String filename) {
         String fileExtension = FilenameUtils.getExtension(filename).toLowerCase();
         FileHandler fileHandler = registry.getFileHandler(fileExtension);
@@ -42,7 +40,7 @@ public class App {
         }
         return fileHandler;
     }
-
+    // Exécute une commande
     private static void executeCommand(String command, List<String> positionalArgs) throws IOException {
         Command commandExecutor = commandRegistry.getCommand(command);
         if (commandExecutor != null) {
@@ -51,6 +49,7 @@ public class App {
             System.err.println("Commande inconnue: " + command);
         }
     }
+
     /**
      * Do not change this method
      */
@@ -61,6 +60,7 @@ public class App {
     public static int exec(String[] args) throws IOException {
 
         Options cliOptions = new Options();
+        // Ajout des options
         cliOptions.addRequiredOption("s", "source", true, "File containing the todos");
         cliOptions.addOption("d", "done", false, "Mark a todo as done");
         cliOptions.addOption("o", "output", true, "The destination file");
@@ -72,36 +72,41 @@ public class App {
 
         // Traitement de la commande
         MyCommandProcessor commandProcessor = new MyCommandProcessor();
-        int result = commandProcessor.processCommand(cmd);
-        String fileName = commandProcessor.getFileName();
-        TaskState taskState = commandProcessor.getTaskState();
-        String outputFile = commandProcessor.getOutputFile();
+        commandProcessor.processCommand(cmd);
+
+        // Récupération de la commande
         List<String> positionalArgs = commandProcessor.getPositionalArgs();
-
-        if(result != 0) return 1;
-
         String command = positionalArgs.get(0);
-        Path filePath = Paths.get(fileName);
+
+        // Définition des différents chemins
+        Path filePath = Paths.get(commandProcessor.getFileName());
         Path outputPath = null;
 
-        // Utilisation du registre des factories pour créer le FileHandler approprié
-        FileHandler fileHandler = detectFileType(fileName);
+        // Utilisation du registre pour créer le FileHandler approprié
+        FileHandler fileHandler = detectFileType(commandProcessor.getFileName());
         FileHandler outputFileHandler = null;
 
-        if (outputFile != null) {
-            outputPath = Paths.get(outputFile);
-            outputFileHandler = detectFileType(outputFile);
+        // Vérification de l'option "--output"
+        if (commandProcessor.getOutputFile() != null) {
+            outputPath = Paths.get(commandProcessor.getOutputFile());
+            outputFileHandler = detectFileType(commandProcessor.getOutputFile());
         }
 
         // Initialisation du registre de commande
-        commandRegistry.createCommand("insert", new InsertCommand(fileHandler, filePath, taskState));
-        commandRegistry.createCommand("list", new ListCommand(fileHandler, filePath, taskState));
+        commandRegistry.createCommand(
+                "insert",
+                new InsertCommand(fileHandler, filePath, commandProcessor.getTaskState())
+        );
+        commandRegistry.createCommand(
+                "list",
+                new ListCommand(fileHandler, filePath, commandProcessor.getTaskState())
+        );
         commandRegistry.createCommand(
                 "migrate",
                 new MigrateCommand(fileHandler, outputFileHandler, filePath, outputPath)
         );
 
-        // Utilisation de la table de correspondence pour déterminer la commande
+        // Utilisation de la table de correspondence pour déterminer la commande à exécuter
         executeCommand(command, positionalArgs);
 
         System.err.println("Done.");

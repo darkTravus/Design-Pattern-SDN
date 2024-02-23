@@ -1,7 +1,7 @@
 package com.fges.todoapp.commands;
 
 import com.fges.todoapp.util.PositionalArgumentValidator;
-import com.fges.todoapp.util.TaskState;
+import com.fges.todoapp.todo.TaskState;
 import org.apache.commons.cli.CommandLine;
 
 import java.util.List;
