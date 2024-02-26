@@ -69,11 +69,12 @@ public class JsonFileHandler implements FileHandler {
                     if (todoNode != null) {
                         String task = todoNode.asText();
                         boolean done = doneNode != null && doneNode.asBoolean();
-                        Todo todo = new Todo(task, done);
+                        TaskState state = done ? TaskState.DONE : TaskState.NOT_DONE;
+                        Todo todo = new Todo(task, state);
                         todoList.add(todo);
                     } else {
                         String task = node.asText();
-                        Todo todo = new Todo(task, false);
+                        Todo todo = new Todo(task, TaskState.NOT_DONE);
                         todoList.add(todo);
                     }
                 });

@@ -30,7 +30,7 @@ public class InsertCommand implements Command {
 
         String task = positionalArgs.get(1);
         List<Todo> todos = new java.util.ArrayList<>(Collections.emptyList());
-        Todo todo = new Todo();
+        Todo todo = new Todo(task, this.taskState);
         todo.setName(task);
         todo.setTaskState(this.taskState);
         todos.add(todo);

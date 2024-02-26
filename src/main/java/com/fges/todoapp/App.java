@@ -14,8 +14,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 
-import org.apache.commons.io.FilenameUtils;
-
 
 /**
  * Hello world!
@@ -32,7 +30,7 @@ public class App {
     }
     // Retourne le FileHandler en fonction de l'extension du fichier
     private static FileHandler detectFileType (String filename) {
-        String fileExtension = FilenameUtils.getExtension(filename).toLowerCase();
+        String fileExtension = getFileExtension(filename);
         FileHandler fileHandler = registry.getFileHandler(fileExtension);
         if (fileHandler == null) {
             System.err.println("Extension de fichier non prise en charge : " + fileExtension);
@@ -48,6 +46,17 @@ public class App {
         } else {
             System.err.println("Commande inconnue: " + command);
         }
+    }
+    // Récupérer l'extension d'un fichier
+    private static String getFileExtension(String filename) {
+        if (filename == null) {
+            return null;
+        }
+        int lastDotIndex = filename.lastIndexOf('.');
+        if (lastDotIndex == -1) {
+            return "";
+        }
+        return filename.substring(lastDotIndex + 1).toLowerCase();
     }
 
     /**

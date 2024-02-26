@@ -3,45 +3,53 @@ package com.fges.todoapp.files.csv;
 import com.fges.todoapp.files.FileHandler;
 import com.fges.todoapp.todo.TaskState;
 import com.fges.todoapp.todo.Todo;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.CSVRecord;
 
 import java.io.*;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class CsvFileHandler implements FileHandler {
     @Override
-    public void write(List <Todo> todos, Path filePath) throws IOException {
-        for (Todo todo : todos) {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath.toFile(), true))) {
-                String taskState = todo.getTaskState() == TaskState.DONE ? "Done" : "Not Done";
-                writer.write(todo.getName() + ";" + taskState + "\n");
-            } catch (IOException e) {
-                System.err.println("Error processing CSV insert: " + e.getMessage());
+    public void write(List<Todo> todos, Path filePath) throws IOException {
+        CSVFormat csvFormat = CSVFormat.DEFAULT;
+        try (
+                FileWriter fWriter = new FileWriter(filePath.toFile(), true);
+                CSVPrinter csvPrinter = new CSVPrinter(fWriter, csvFormat))
+        {
+            for (Todo todo : todos) {
+                List<String> rowDataList = new ArrayList<>();
+                rowDataList.add(todo.getName());
+                rowDataList.add((todo.getTaskState() == TaskState.DONE) ? "Done" : "Not Done");
+
+                csvPrinter.printRecord(rowDataList);
             }
+        } catch (IOException e) {
+            System.err.println("Error processing CSV insert: " + e.getMessage());
         }
     }
+
     @Override
     public List<Todo> read(Path filePath) {
         List<Todo> todoList = new ArrayList<>();
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath.toFile()))) {
-            String line;
+        try (FileReader fReader = new FileReader(filePath.toFile()); CSVParser csvParser = CSVFormat.DEFAULT.parse(fReader)) {
+            for (CSVRecord csvRecord : csvParser) {
+                String name = csvRecord.get(0);
+                String status = csvRecord.get(1);
 
-            while ((line = reader.readLine()) != null) {
-                String[] fields = line.split(";");
-                if (fields.length >= 2) {
-                    String task = fields[0].trim();
-                    boolean done = fields[1].trim().equalsIgnoreCase("Done");
-                    todoList.add(new Todo(task, done));
-                }
+                TaskState taskState = status.equals("Done") ? TaskState.DONE : TaskState.NOT_DONE;
+                Todo todo = new Todo(name, taskState);
+                todoList.add(todo);
             }
-            return todoList;
         } catch (IOException e) {
-            System.err.println("Error processing CSV list: " + e.getMessage());
-            return Collections.emptyList();
+            System.err.println("Error reading CSV file: " + e.getMessage());
         }
 
+        return todoList;
     }
 }
