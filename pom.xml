@@ -58,6 +58,12 @@
       <version>1.9.0</version>
     </dependency>
 
+    <dependency>
+      <groupId>fr.anthonyquere</groupId>
+      <artifactId>dumbcrud</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+
   </dependencies>
 
   <build>

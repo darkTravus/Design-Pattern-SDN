@@ -114,6 +114,10 @@ public class App {
                 "migrate",
                 new MigrateCommand(fileHandler, outputFileHandler, filePath, outputPath)
         );
+        commandRegistry.createCommand(
+                "web",
+                new WebCommand(fileHandler, filePath)
+        );
 
         // Utilisation de la table de correspondence pour déterminer la commande à exécuter
         executeCommand(command, positionalArgs);

@@ -3,6 +3,7 @@ package com.fges.todoapp.todo;
 public class Todo {
     private String name;
     private TaskState taskState;
+    public Todo () {}
     public Todo (String name, TaskState taskState) {
         this.name = name;
         this.taskState = taskState;
