@@ -8,6 +8,10 @@ public class Todo {
         this.name = name;
         this.taskState = taskState;
     }
+    public Todo (String name, String status) {
+        this.name = name;
+        this.taskState = (status == "DONE") ? TaskState.DONE : TaskState.NOT_DONE;
+    }
 
     public String getName() {
         return name;
@@ -23,6 +27,10 @@ public class Todo {
 
     public void setTaskState(TaskState taskState) {
         this.taskState = taskState;
+    }
+
+    public String getStatus() {
+        return (this.taskState == TaskState.DONE) ? "DONE" : "NOT_DONE";
     }
 }
 

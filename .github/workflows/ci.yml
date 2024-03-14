@@ -1,0 +1,11 @@
+name: 'Run Tests'
+
+on: 'push'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          docker run --rm -v "$PWD:/workspace/repo" ghcr.io/anthony-jhoiro/2023-2024_l3-design-pattern:tp-final

@@ -1,6 +1,6 @@
 package com.fges.todoapp.util;
 
-import com.fges.todoapp.todo.Todo;
+import com.fges.todoapp.dto.TodoDTO;
 import com.fges.todoapp.todo.TodoProvider;
 import fr.anthonyquere.dumbcrud.DummyCrudEndpoint;
 
@@ -20,11 +20,11 @@ public class ServerRunner {
         Scanner scanner = new Scanner(System.in);
 
         // Lancement du serveur
-        DummyCrudEndpoint<Todo> endpoint = new DummyCrudEndpoint<>(this.domainName, provider, Todo.class);
+        DummyCrudEndpoint<TodoDTO> endpoint = new DummyCrudEndpoint<>(this.domainName, provider, TodoDTO.class);
 
         endpoint.run(port);
-        System.out.println("Serveur démarré sur le port " + port + ".");
-        System.out.println("'stop' pour arrêter le serveur");
+        System.err.println("Serveur démarré sur le port " + port + ".");
+        System.err.println("'stop' pour arrêter le serveur");
 
         while (!stopRequested) {
             String input = scanner.nextLine();
@@ -33,7 +33,7 @@ public class ServerRunner {
             }
         }
 
-        System.out.println("Serveur arrêté.");
+        System.err.println("Serveur arrêté.");
     }
 }
 

@@ -1,5 +1,6 @@
 package com.fges.todoapp.todo;
 
+import com.fges.todoapp.dto.TodoDTO;
 import com.fges.todoapp.files.FileHandler;
 import fr.anthonyquere.dumbcrud.CrudProvider;
 
@@ -7,7 +8,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TodoProvider implements CrudProvider<Todo> {
+public class TodoProvider implements CrudProvider<TodoDTO> {
     private final FileHandler fileHandler;
     private final Path filePath;
 
@@ -17,7 +18,8 @@ public class TodoProvider implements CrudProvider<Todo> {
     }
 
     @Override
-    public void add(Todo todo) throws Exception {
+    public void add(TodoDTO todoDTO) throws Exception {
+        Todo todo = new Todo(todoDTO.getContent(), todoDTO.getStatus());
         List<Todo> todos = new ArrayList<>();
         todos.add(todo);
         this.fileHandler.write(todos, this.filePath);
@@ -25,8 +27,13 @@ public class TodoProvider implements CrudProvider<Todo> {
     }
 
     @Override
-    public List<Todo> list() throws Exception {
-        System.err.println("Todo listed to " + this.filePath + " from the server");
-        return this.fileHandler.read(this.filePath);
+    public List<TodoDTO> list() throws Exception {
+        List<Todo> todos = this.fileHandler.read(this.filePath);
+        List<TodoDTO> todoDTOs = new ArrayList<>();
+        for (Todo todo : todos) {
+            todoDTOs.add(new TodoDTO(todo.getName(), todo.getStatus()));
+        }
+        System.err.println("Todo listed from " + this.filePath + " to the server");
+        return todoDTOs;
     }
 }

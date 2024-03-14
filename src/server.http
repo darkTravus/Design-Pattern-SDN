@@ -7,6 +7,6 @@ POST http://localhost:8888/todo
 Content-Type: application/json
 
 {
-  "name": "My name",
-  "taskState": "DONE"
+  "content": "Second todo",
+  "status": "DONE"
 }
