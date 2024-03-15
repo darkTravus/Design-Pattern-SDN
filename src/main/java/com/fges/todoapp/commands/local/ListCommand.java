@@ -1,6 +1,7 @@
-// com.fges.todoapp.commands.ListCommand
-package com.fges.todoapp.commands;
+// com.fges.todoapp.commands.local.ListCommand
+package com.fges.todoapp.commands.local;
 
+import com.fges.todoapp.commands.Command;
 import com.fges.todoapp.files.FileHandler;
 import com.fges.todoapp.todo.TaskState;
 import com.fges.todoapp.todo.Todo;

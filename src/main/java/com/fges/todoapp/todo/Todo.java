@@ -10,7 +10,7 @@ public class Todo {
     }
     public Todo (String name, String status) {
         this.name = name;
-        this.taskState = (status == "DONE") ? TaskState.DONE : TaskState.NOT_DONE;
+        this.taskState = (status.equals("DONE")) ? TaskState.DONE : TaskState.NOT_DONE;
     }
 
     public String getName() {

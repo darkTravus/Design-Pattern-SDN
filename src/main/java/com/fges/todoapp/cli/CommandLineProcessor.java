@@ -1,4 +1,4 @@
-package com.fges.todoapp.commands;
+package com.fges.todoapp.cli;
 
 import org.apache.commons.cli.*;
 

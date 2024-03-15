@@ -1,6 +1,7 @@
-// com.fges.todoapp.commands.InsertCommand
-package com.fges.todoapp.commands;
+// com.fges.todoapp.commands.local.InsertCommand
+package com.fges.todoapp.commands.local;
 
+import com.fges.todoapp.commands.Command;
 import com.fges.todoapp.files.FileHandler;
 import com.fges.todoapp.todo.Todo;
 import com.fges.todoapp.todo.TaskState;

@@ -1,5 +1,6 @@
-package com.fges.todoapp.commands;
+package com.fges.todoapp.commands.local;
 
+import com.fges.todoapp.commands.Command;
 import com.fges.todoapp.files.FileHandler;
 import com.fges.todoapp.todo.Todo;
 

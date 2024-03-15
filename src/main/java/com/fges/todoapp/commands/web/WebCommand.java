@@ -1,5 +1,6 @@
-package com.fges.todoapp.commands;
+package com.fges.todoapp.commands.web;
 
+import com.fges.todoapp.commands.Command;
 import com.fges.todoapp.files.FileHandler;
 import com.fges.todoapp.todo.TodoProvider;
 import com.fges.todoapp.util.ServerRunner;

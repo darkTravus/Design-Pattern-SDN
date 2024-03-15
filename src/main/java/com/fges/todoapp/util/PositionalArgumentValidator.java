@@ -6,8 +6,13 @@ import java.util.List;
 
 public class PositionalArgumentValidator implements ArgumentValidator {
     @Override
-    public boolean validateArguments(CommandLine cmd) {
+    public boolean validateArguments(CommandLine cmd, int numberOfArgument) {
         List<String> positionalArgs = cmd.getArgList();
-        return !positionalArgs.isEmpty();
+        //System.out.println(positionalArgs)
+        if (numberOfArgument == 0) {
+            return !positionalArgs.isEmpty();
+        } else {
+            return (positionalArgs.size() < numberOfArgument);
+        }
     }
 }

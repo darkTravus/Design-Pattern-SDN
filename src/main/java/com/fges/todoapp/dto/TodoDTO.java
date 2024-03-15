@@ -1,7 +1,5 @@
 package com.fges.todoapp.dto;
 
-import com.fges.todoapp.todo.TaskState;
-
 public class TodoDTO {
     private String content;
     private String status;
