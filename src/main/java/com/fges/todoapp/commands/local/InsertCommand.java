@@ -1,24 +1,19 @@
-// com.fges.todoapp.commands.local.InsertCommand
 package com.fges.todoapp.commands.local;
 
 import com.fges.todoapp.commands.Command;
-import com.fges.todoapp.files.FileHandler;
 import com.fges.todoapp.todo.Todo;
 import com.fges.todoapp.todo.TaskState;
+import com.fges.todoapp.storage.DataAccessor;
 
 import java.io.IOException;
-import java.nio.file.Path;
-import java.util.Collections;
 import java.util.List;
 
 public class InsertCommand implements Command {
-    private final FileHandler fileHandler;
-    private final Path filePath;
+    private final DataAccessor dataAccessor;
     private final TaskState taskState;
 
-    public InsertCommand(FileHandler fileHandler, Path filePath, TaskState taskState) {
-        this.fileHandler = fileHandler;
-        this.filePath = filePath;
+    public InsertCommand(DataAccessor dataAccessor, TaskState taskState) {
+        this.dataAccessor = dataAccessor;
         this.taskState = taskState;
     }
 
@@ -30,12 +25,8 @@ public class InsertCommand implements Command {
         }
 
         String task = positionalArgs.get(1);
-        List<Todo> todos = new java.util.ArrayList<>(Collections.emptyList());
-        Todo todo = new Todo(task, this.taskState);
-        todo.setName(task);
-        todo.setTaskState(this.taskState);
-        todos.add(todo);
-        this.fileHandler.write(todos, this.filePath);
+        Todo todo = new Todo(task, taskState);
+        dataAccessor.insert(todo);
 
         return 0;
     }

@@ -1,12 +1,12 @@
-package com.fges.todoapp.files.json;
+package com.fges.todoapp.storage.files.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.MissingNode;
-import com.fges.todoapp.files.FileHandler;
-import com.fges.todoapp.files.FileReader;
+import com.fges.todoapp.storage.files.FileHandler;
+import com.fges.todoapp.storage.files.FileReader;
 import com.fges.todoapp.util.PathValidator;
 import com.fges.todoapp.todo.TaskState;
 import com.fges.todoapp.todo.Todo;

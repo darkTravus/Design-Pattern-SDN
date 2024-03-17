@@ -4,9 +4,9 @@ package com.fges.todoapp;
 import com.fges.todoapp.cli.CommandLineProcessor;
 import com.fges.todoapp.cli.CommandProcessor;
 import com.fges.todoapp.commands.Command;
-import com.fges.todoapp.commands.local.CommandFactory;
-import com.fges.todoapp.files.FileHandler;
-import com.fges.todoapp.files.FileHandlerRegistry;
+import com.fges.todoapp.commands.CommandFactory;
+import com.fges.todoapp.storage.StorageHandler;
+import com.fges.todoapp.storage.StorageFactory;
 import org.apache.commons.cli.*;
 
 import java.io.IOException;
@@ -14,7 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class App {
-    private static final FileHandlerRegistry fileRegistry = new FileHandlerRegistry();
+    private static final StorageFactory fileRegistry = new StorageFactory();
 
     public static void main(String[] args) throws Exception {
         System.exit(exec(args));
@@ -28,10 +28,10 @@ public class App {
         CommandProcessor commandProcessor = new CommandProcessor(cmd);
         commandProcessor.processCommand();
 
-        FileHandler fileHandler = fileRegistry.detectFileType(commandProcessor.getFileName());
+        StorageHandler fileHandler = fileRegistry.detectHandler(commandProcessor.getFileName());
         Path filePath = Paths.get(commandProcessor.getFileName());
         Path outputPath = commandProcessor.getOutputFile() != null ? Paths.get(commandProcessor.getOutputFile()) : null;
-        FileHandler outputFileHandler = outputPath != null ? fileRegistry.detectFileType(commandProcessor.getOutputFile()) : null;
+        StorageHandler outputFileHandler = outputPath != null ? fileRegistry.detectHandler(commandProcessor.getOutputFile()) : null;
 
         String commandName = commandProcessor.getPositionalArgs().get(0);
         Command command = CommandFactory.createCommand(commandName, fileHandler, filePath, outputFileHandler, outputPath, commandProcessor.getTaskState());

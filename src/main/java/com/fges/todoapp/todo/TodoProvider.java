@@ -1,39 +1,34 @@
 package com.fges.todoapp.todo;
 
 import com.fges.todoapp.dto.TodoDTO;
-import com.fges.todoapp.files.FileHandler;
+import com.fges.todoapp.storage.DataAccessor;
 import fr.anthonyquere.dumbcrud.CrudProvider;
 
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TodoProvider implements CrudProvider<TodoDTO> {
-    private final FileHandler fileHandler;
-    private final Path filePath;
+    private final DataAccessor dataAccessor;
 
-    public TodoProvider(FileHandler fileHandler, Path filePath) {
-        this.fileHandler = fileHandler;
-        this.filePath = filePath;
+    public TodoProvider(DataAccessor dataAccessor) {
+        this.dataAccessor = dataAccessor;
     }
 
     @Override
     public void add(TodoDTO todoDTO) throws Exception {
         Todo todo = new Todo(todoDTO.getContent(), todoDTO.getStatus());
-        List<Todo> todos = new ArrayList<>();
-        todos.add(todo);
-        this.fileHandler.write(todos, this.filePath);
-        System.err.println("Todo added to " + this.filePath + " from the server");
+        this.dataAccessor.insert(todo);
+        System.err.println("Todo added from the server");
     }
 
     @Override
     public List<TodoDTO> list() throws Exception {
-        List<Todo> todos = this.fileHandler.read(this.filePath);
+        List<Todo> todos = this.dataAccessor.read();
         List<TodoDTO> todoDTOs = new ArrayList<>();
         for (Todo todo : todos) {
             todoDTOs.add(new TodoDTO(todo.getName(), todo.getStatus()));
         }
-        System.err.println("Todo listed from " + this.filePath + " to the server");
+        System.err.println("Todo listed to the server");
         return todoDTOs;
     }
 }

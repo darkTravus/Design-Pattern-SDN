@@ -1,5 +1,5 @@
 // com.fges.todoapp.files.FileReader
-package com.fges.todoapp.files;
+package com.fges.todoapp.storage.files;
 
 import com.fges.todoapp.util.PathValidator;
 

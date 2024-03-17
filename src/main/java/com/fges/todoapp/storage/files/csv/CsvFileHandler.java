@@ -1,6 +1,6 @@
-package com.fges.todoapp.files.csv;
+package com.fges.todoapp.storage.files.csv;
 
-import com.fges.todoapp.files.FileHandler;
+import com.fges.todoapp.storage.files.FileHandler;
 import com.fges.todoapp.todo.TaskState;
 import com.fges.todoapp.todo.Todo;
 import org.apache.commons.csv.CSVFormat;
@@ -15,7 +15,7 @@ import java.util.List;
 
 public class CsvFileHandler implements FileHandler {
     @Override
-    public void write(List<Todo> todos, Path filePath) throws IOException {
+    public void write(List<Todo> todos, Path filePath) {
         CSVFormat csvFormat = CSVFormat.DEFAULT;
         try (
                 FileWriter fWriter = new FileWriter(filePath.toFile(), true);
