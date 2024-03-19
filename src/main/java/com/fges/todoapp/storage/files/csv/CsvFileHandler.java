@@ -1,6 +1,6 @@
 package com.fges.todoapp.storage.files.csv;
 
-import com.fges.todoapp.storage.files.FileHandler;
+import com.fges.todoapp.storage.StorageHandler;
 import com.fges.todoapp.todo.TaskState;
 import com.fges.todoapp.todo.Todo;
 import org.apache.commons.csv.CSVFormat;
@@ -13,7 +13,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CsvFileHandler implements FileHandler {
+public class CsvFileHandler implements StorageHandler {
     @Override
     public void write(List<Todo> todos, Path filePath) {
         CSVFormat csvFormat = CSVFormat.DEFAULT;

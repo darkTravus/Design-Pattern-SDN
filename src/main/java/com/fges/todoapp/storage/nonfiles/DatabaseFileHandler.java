@@ -1,5 +1,6 @@
 package com.fges.todoapp.storage.nonfiles;
 
+import com.fges.todoapp.storage.StorageHandler;
 import com.fges.todoapp.todo.Todo;
 
 import java.io.IOException;
@@ -7,7 +8,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatabaseFileHandler implements NonFileHandler {
+public class DatabaseFileHandler implements StorageHandler {
     // Méthode pour lire les données depuis la base de données
     @Override
     public List<Todo> read(Path filePath) {

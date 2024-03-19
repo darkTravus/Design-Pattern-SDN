@@ -28,13 +28,13 @@ public class App {
         CommandProcessor commandProcessor = new CommandProcessor(cmd);
         commandProcessor.processCommand();
 
-        StorageHandler fileHandler = fileRegistry.detectHandler(commandProcessor.getFileName());
+        StorageHandler inputHandler = fileRegistry.detectHandler(commandProcessor.getFileName());
         Path filePath = Paths.get(commandProcessor.getFileName());
         Path outputPath = commandProcessor.getOutputFile() != null ? Paths.get(commandProcessor.getOutputFile()) : null;
-        StorageHandler outputFileHandler = outputPath != null ? fileRegistry.detectHandler(commandProcessor.getOutputFile()) : null;
+        StorageHandler outputHandler = outputPath != null ? fileRegistry.detectHandler(commandProcessor.getOutputFile()) : null;
 
         String commandName = commandProcessor.getPositionalArgs().get(0);
-        Command command = CommandFactory.createCommand(commandName, fileHandler, filePath, outputFileHandler, outputPath, commandProcessor.getTaskState());
+        Command command = CommandFactory.createCommand(commandName, inputHandler, filePath, outputHandler, outputPath, commandProcessor.getTaskState());
         assert command != null;
         command.execute(commandProcessor.getPositionalArgs());
 

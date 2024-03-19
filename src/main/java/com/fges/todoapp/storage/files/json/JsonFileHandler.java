@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.MissingNode;
-import com.fges.todoapp.storage.files.FileHandler;
+import com.fges.todoapp.storage.StorageHandler;
 import com.fges.todoapp.storage.files.FileReader;
 import com.fges.todoapp.util.PathValidator;
 import com.fges.todoapp.todo.TaskState;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class JsonFileHandler implements FileHandler {
+public class JsonFileHandler implements StorageHandler {
     @Override
     public void write(List <Todo> todos, Path filePath) throws IOException {
         String fileContent = FileReader.readFileContent(filePath, new PathValidator());
